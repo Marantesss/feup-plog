@@ -31,7 +31,7 @@ pessoal_universidade(Universidade, Pessoa):-
 colega(Pessoa_1, Pessoa_2):-
     frequenta(Pessoa_1, Cadeira),
     frequenta(Pessoa_2, Cadeira),
-    Pessoa_1 \= Pessoa_2.
+    Pessoa_1 \= Pessoa_2. % @> or @< to avoid duplicates, doesn't work for equal names
 
 colega(Pessoa_1, Pessoa_2):-
     aluno(Pessoa_1, Universidade),

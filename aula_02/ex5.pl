@@ -5,7 +5,7 @@ e_primo(N):-
     N > 3, % N tem que ser maior que 3
     integer(N), % N tem que ser inteiro
     N mod 2 =\= 0, % N nao pode ser par
-    \+e_fator(N, 3).
+    \+e_fator(N, 3). % \+ -> negacao
 
 e_fator(N, F):-
     N mod F =:= 0. % Para um N ser fator de F, N tem que ser divisivel por F

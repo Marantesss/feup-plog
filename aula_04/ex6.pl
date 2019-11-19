@@ -29,4 +29,26 @@ caminho(NoInicio, NoFim, Lista, ListaFim, N):-
 
 % b)
 ciclos(No, Comp, Lista):-
-    findall(Ciclo, caminho(No, No, [], Ciclo, Comp), Lista). 
+    findall(Ciclo, caminho(No, No, [], Ciclo, Comp), Lista).
+
+% cenas aleatorias :)
+father(j, a).
+father(j, b).
+father(j, c).
+father(j, d).
+father(j, e).
+
+children(X,Kids) :- children(X,[],Kids).
+children(X,Cs,Kids) :-
+    father(X,Kid), 
+    \+member(Kid,Cs),
+    !,
+    children(X,[Kid|Cs],Kids).
+children(X,Cs,Cs).
+
+children2(X,Kids) :- assert(kids(X,[])), fail.
+children2(X,Kids) :-
+ father(X,Kid),
+ retract(kids(X,Cs)), assert(kids(X,[Kid|Cs])),
+ fail.
+children2(X,Kids) :- retract(kids(X,Kids)).

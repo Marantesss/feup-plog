@@ -162,3 +162,58 @@ eligibleOutcome(Id, Perf, TT):-
     madeItThrough(Id),
     participant(Id, _, Perf),
     sumlist(Times, TT).
+
+getFirstNElements(_, 0, []).
+getFirstNElements([H | T], N, [H | List]):-
+    N1 is N - 1,
+    getFirstNElements(T, N1, List).
+
+nextPhase(N, Participants):-
+    Goal = (
+        eligibleOutcome(Id, Perf, TT)
+    ),
+    setof(TT-Id-Perf, Goal, AuxParticipants),
+    getFirstNElements(AuxParticipants, N, Participants).
+
+test8:- nextPhase(2, P), write(P).
+
+% ex 9
+predX(Q, [R | Rs], [P | Ps]):-
+    participant(R, I, P),
+    I =< Q,
+    !,
+    predX(Q, Rs, Ps).
+
+predX(Q, [R | Rs], Ps):-
+    participant(R, I, _),
+    I > Q,
+    predX(Q, Rs, Ps).
+
+predX(_, [], []).
+
+/** Resposta - Thanks to @pemesteves <3
+ * O predX retorna no terceiro argumento o nome de todas as atuações de pessoas com idade igual ou inferior ao primeiro argumento
+ * Este cut é verde, uma vez que não influencia o resultado do programa, mas apenas a sua eficiência
+ * E um caso de otimizacao com recursividade na cauda, isto e, e do tipo A:- B1, B2, ..., !, Bn
+ */
+
+% ex 10
+impoe(X, L) :-
+    length(Mid, X),
+    append(L1, [X | _], L), append(_, [X | Mid], L1).
+
+/** Resposta
+ * O predicado impoe/2 cria uma lista L que cumpre os requisitos
+ */
+
+% ex 11
+langford(N, L):-
+    Length is 2 * N,
+    length(L, Length),
+    langford_helper(N, L).
+
+langford_helper(0, _):- !.
+langford_helper(N, L):-
+    impoe(N, L),
+    Next is N - 1,
+    langford_helper(Next, L).

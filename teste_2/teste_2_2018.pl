@@ -92,16 +92,18 @@ optimal_skating_pairs(+MenHeights,+WomenHeights,+Delta,-Pairs)
      - diferenca de alturas entre homem e mulher seja inferior a um delta
      - homem nunca pode ser maior que a mulher
 */
-optimal_gym_pairs(MenHeights, WomenHeights, Delta, Pairs):-
+optimal_skating_pairs(MenHeights, WomenHeights, Delta, Pairs):-
 	same_length(Matrix, MenHeights),
+    % maplist(:Pred, +List - succeeds when Pred(X) succeeds for each element X of List
 	maplist(same_length(WomenHeights), Matrix),
 	maplist(domain_and_constraint, Matrix),
-	transpose(Matrix, TMatrix),
-	maplist(domain_and_constraint, TMatrix),
+    transpose(Matrix, TMatrix),
+    maplist(domain_and_constraint, TMatrix),
+    
 	scanlist(height_rules(MenHeights, WomenHeights, Delta), Matrix, 1, _),
 	scanlist(sum_line, Matrix, 0, CountPairs),
 	append(Matrix, Vars),
-	labeling([maximize(CountPairs),down], Vars),
+    labeling([maximize(CountPairs), down], Vars),
 	findall(H-M, (nth1(H, Matrix, Line), nth1(M, Line, 1)), Pairs).
 	
 height_rules(MenHeights, WomenHeights, Delta, Line, Hi, NextHi):-
@@ -115,9 +117,10 @@ height_rule_cell(MenHeights, WomenHeights, Delta, Hi, Cell, Mi, NextMi):-
 	Cell #=> H #> M #/\ H - M #=< Delta.
 
 domain_and_constraint(Line):-
-	domain(Line, 0, 1),
-	count(1, Line, #=, Match),
-	Match in 0..1. %single match
+    domain(Line, 0, 1),
+    % single match
+	Match in 0..1,
+	count(1, Line, #=, Match).
 
 sum_line(Line, Prev, Sum):-
     sum(Line, #=, Acc),

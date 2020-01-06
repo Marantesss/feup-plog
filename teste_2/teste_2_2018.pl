@@ -45,6 +45,9 @@ prog2(N, M, L1, L2):-
 
 % EX 4
 /*
+
+BIG THANKS TO msramalho (https://github.com/msramalho/feup-plog/tree/master/exams/moodelo_16_17_plr)
+
 gym_pairs(+MenHeights,+WomenHeights,+Delta,-Pairs)
  - emparelhamentos:
      - diferenca de alturas entre homem e mulher seja inferior a um delta
@@ -85,7 +88,7 @@ height_rule(MenHeights, WomenHeights, Delta, Hi, Mi, 0, 0):-
 sort_it(Current, Prev, Current):-
     Prev #< Current.
 
-% EX 4
+% EX 5
 /*
 optimal_skating_pairs(+MenHeights,+WomenHeights,+Delta,-Pairs)
  - emparelhamentos:

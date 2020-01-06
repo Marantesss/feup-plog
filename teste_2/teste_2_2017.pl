@@ -25,7 +25,7 @@ O que faz?
 
 Eficiencia?
     Este tipo de algoritmo é do tipo generate and test, o que não é muito
-    eficiente uma vez que são geradas todas as lsitas possiveis, e o
+    eficiente uma vez que são geradas todas as listas possiveis, e o
     predicado test encarrega-se de verificar se a lista está ordenada
 */
 

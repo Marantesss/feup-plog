@@ -111,7 +111,7 @@ cut(Shelves, Boards, SelectedBoards):-
 
     % ---- domain
     length(Boards, NBoards),
-    domain(SelectedBoard, 1, NBoards),
+    domain(SelectedBoards, 1, NBoards),
 
     % ---- constraints
     get_tasks(Shelves, SelectedBoards, Tasks),
@@ -140,7 +140,7 @@ get_tasks([S | Shelves], [B | SelectedBoards], [T | Tasks]):-
     All fields are domain variables with bounded domains.
     */
     T = task(0, S, S, S, B),
-    getTasks(Shelves, SelectedBoards, Tasks).
+    get_tasks(Shelves, SelectedBoards, Tasks).
 
 get_machines([], [], _).
 get_machines([B | Boards], [M | Machines], Id):-

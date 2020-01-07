@@ -64,9 +64,10 @@ constroi_bins(I, [V | Vs], [LBin | LBins]):-
 % EX 6
 /*
 Variaveis de decisão:
-     - lista em que o elemento de indice i indica em que compartimento o objeto correspondente deve ficar.
+     - Matriz com numero de linhas igual ao numero de prateleiras e cada linha
+     tem a quantidade de objetos como numero de células
 Domínios:
-     - Entre 1 e nº de compartimentos
+     - 0 e 1, 0 se esse objeto nao está na prateleira, 1 caso esteja
 
 No exemplo:
 prat([[30, 6], [75, 15]], [176-40, 396-24, 474-35, 250-8, 149-5, 479-5], Vars).
@@ -76,14 +77,19 @@ Vars = [3, 1, 3, 4, 1, 4], significa que:
      - compartimento 3 vai conter o objeto de indice 1 e 3;
      - compartimento 4 vai conter o objeto de indice 4 e 6.
 
-Para resolver o problema é necessário restringir o volume de cada compartimento,
-pelo que é necesário obter a soma dos volumes dos objetos cujo valor das variaveis
-em Vars sejam iguais, e restringir que essa soma não é maior que o volume máximo
-desse comportimento.
+Para resolver o problema é necessário restringir o volume de cada prateleia, para isso
+basta "calcular" a soma das dimensões dos objetos que estão nessa prateleira. Isto faz-se
+usando o scalar_product entre a lista de dimensões dos objetos e a linha da matriz
+respetiva à prateleira. Após ter "calculado" o peso total desses objetos, basta
+restringir essa soma de forma a ser inferior ou igual à dimensão da prateleira
+
 Depois para aplicar a restrição do peso de cada compartimento ser inferior ao que está
-imediatamente abaixo, é necessário obter o peso de cada compartimento numa lista de
-sequência e restringir que esse peso não pode ser inferior ao daquele que estiver
-N casa antes, onde N é o número de compartimentos por linha.
+imediatamente abaixo, é necessário transpor a matriz do armário, de forma a que cada
+linha seja agora respetivo à coluna do armário. Agora coluna a coluna, para cada par
+de prateleiras dessa coluna basta "calcular" a soma dos pesos dos objetos para as duas
+prateleiras do par, por um método semelhante ao explicado para as dimensões. Depois de
+calculado esse peso total, basta restringir que o peso na primeira prateleira não pode
+ser superior ao peso na segunda.
 */
 
 % EX 7

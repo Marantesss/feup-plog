@@ -170,3 +170,82 @@ weight_constraint(PesoObjetos, Matrix, FlatPrateleiras, [Cima, Baixo | ColunaPra
     scalar_product(PesoObjetos, BaixoObjetos, #>=, CimaPeso),
     % repete para as prateleiras seguintes
     weight_constraint(PesoObjetos, Matrix, FlatPrateleiras, [Baixo | ColunaPrateleiras]).
+
+% EX 8
+/*
+Variaveis de decisão:
+     - lista com tempos de inicio e fim de cada tarefa, cada inidice desta
+      lista é respetivo ao indice de cada objeto
+Domínios:
+     - entre 1 e o tempo maximo
+
+Este tipo de problema é de escalonamento, logo pode ser resolvido através
+de tasks e finalmente o predicado cumulative.
+
+furniture.
+total time: 60
+piano: 0-30
+cadeira: 0-10
+cama: 30-45
+mesa: 45-60
+*/
+objeto(piano, 3, 30).
+objeto(cadeira, 1, 10).
+objeto(cama, 3, 15).
+objeto(mesa, 2, 15).
+
+homens(4).
+
+tempo_max(60).
+
+furniture:-
+    % ir buscar cenas a "bd" (lmao)
+    homens(NumeroHomens),
+    tempo_max(TempoMax),
+    % separar objetos em listas
+    findall(Objeto, objeto(Objeto, _, _), Objetos),
+    findall(Homens, objeto(_, Homens, _), HomensNecessarios),
+    findall(Duracao, objeto(_, _, Duracao), Duracoes),
+    % ---- variables
+    same_length(Objetos, StartTimes),    
+    same_length(Objetos, EndTimes),
+    
+    % ---- domain
+    domain(StartTimes, 1, TempoMax),
+    domain(EndTimes, 1, TempoMax),
+    
+    % ---- constraints
+    get_tasks(HomensNecessarios, Duracoes, StartTimes, EndTimes, 1, Tasks),
+    % buscar o tempo em que acaba o ultimo trabalho
+    maximum(Tempo, EndTimes),
+    Tempo #=< TempoMax,
+    % os homens são os recursos, então é preciso limitar que apenas 4
+    % homens podem trabalhar ao mesmo tempo
+    cumulative(Tasks, [limit(NumeroHomens)]),
+    
+    % ---- labeling
+    append(StartTimes, EndTimes, Vars),
+    labeling([minimize(Tempo)], Vars),
+
+    % ---- writing
+    write('Tempo Total: '), write(Tempo), nl,
+    maplist(print_info, Objetos, StartTimes, EndTimes).
+
+print_info(Objeto, StartTime, EndTime):-
+    write(Objeto), write(': '), write(StartTime-EndTime). 
+
+get_tasks([], [], [], [], _, []).
+get_tasks([HN | HomensNecessarios], [D | Duracoes], [St | StartTimes], [En | EndTimes], Id, [T | Tasks]):-
+    /*
+    A task is represented by a term task(Oi,Di,Ei,Hi,Ti) where:
+     - Oi is the start time
+     - Di the non-negative duration
+     - Ei the end time
+     - Hi the non-negative resource consumption
+     - Ti the task identifier.
+    All fields are domain variables with bounded domains.
+    */
+    T = task(St, D, En, HN, Id),
+    NextId is Id + 1,
+    get_tasks(HomensNecessarios, Duracoes, StartTimes, EndTimes, NextId, Tasks).
+

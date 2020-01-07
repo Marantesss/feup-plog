@@ -125,7 +125,11 @@ prat(Prateleiras, Objetos, Vars):-
     % ---- constraints
     % o total de espaco ocupado nao pode ser maior que a capacidade da prateleira
     append(Prateleiras, FlatPrateleiras),
-    maplist(shelf_constraint(EspacoObjetos), FlatPrateleiras, Matrix),
+    maplist(space_constraint(EspacoObjetos), FlatPrateleiras, Matrix),
+
+    % o peso numa prateleira nao pode ser maior que a prateleira que esta em baixo
+    transpose(Prateleiras, ColunasPrateleiras),
+    maplist(weight_constraint(PesoObjetos, Matrix, FlatPrateleiras), ColunasPrateleiras),
 
     % ---- labeling
     append(Matrix, FlatMatrix),
@@ -143,6 +147,20 @@ object_domain(Line):-
     % cada objeto tem apenas uma prateleira associada
     count(1, Line, #=, 1).
 
-shelf_constraint(EspacoObjetos, DimensaoPrateleira, ObjetosPrateleira):-
+space_constraint(EspacoObjetos, DimensaoPrateleira, ObjetosPrateleira):-
     scalar_product(EspacoObjetos, ObjetosPrateleira, #=<, DimensaoPrateleira).
-    
+
+weight_constraint(_PesoObjetos, _Matrix, _FlatPrateleiras, [_PrateleiraBaixo]).
+weight_constraint(PesoObjetos, Matrix, FlatPrateleiras, [Cima, Baixo | ColunaPrateleiras]):-
+    % buscar os indices das prateleiras
+    nth1(CimaIndex, FlatPrateleiras, Cima),
+    nth1(BaixoIndex, FlatPrateleiras, Baixo),
+    CimaIndex < BaixoIndex,
+    % buscar os objetos que estão nessas prateleiras
+    nth1(CimaIndex, Matrix, CimaObjetos),
+    nth1(BaixoIndex, Matrix, BaixoObjetos),
+    % o peso dos objetos de cima nao pode ser maior que os objetos de baixo
+    scalar_product(PesoObjetos, CimaObjetos, #=, CimaPeso),
+    scalar_product(PesoObjetos, BaixoObjetos, #>=, CimaPeso),
+    % repete para as prateleiras seguintes
+    weight_constraint(PesoObjetos, Matrix, FlatPrateleiras, [Baixo | ColunaPrateleiras]).
